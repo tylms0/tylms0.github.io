@@ -1,36 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on tylms0 的博客</title><link>https://tylms0.github.io/post/</link><description>Recent content in Posts on tylms0 的博客</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 17 Aug 2026 12:20:09 +0800</lastBuildDate><atom:link href="https://tylms0.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>oss存储桶遍历</title><link>https://tylms0.github.io/p/oss-bucket-traversal/</link><pubDate>Mon, 17 Aug 2026 12:20:09 +0800</pubDate><guid>https://tylms0.github.io/p/oss-bucket-traversal/</guid><description>&lt;p&gt;&lt;strong&gt;OSS（对象存储服务）&lt;/strong&gt; 是一种用于存储非结构化数据（如图片、音频、视频等）的数据池。数据以对象（Object）的形式存储在OSS的存储空间（Bucket）中。每个对象都有一个唯一的文件名（Key），通过这个Key可以获取对象的内容。&lt;/p&gt;
-&lt;p&gt;攻击者或未授权用户能够列举出 OSS 存储桶里都有哪些文件/对象，也就是拿到桶内的对象列表（文件名、Key、大小、修改时间等元数据）。&lt;/p&gt;
-&lt;p&gt;这里用好靶场的靶场举例
-&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816222719.png"&gt;
-可以看到 这里是直接把路径给贴出来了
-&lt;a class="link" href="http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/hbc_001" target="_blank" rel="noopener"
- &gt;http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/hbc_001&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;把文件下载下来
-&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816223115.png"&gt;
-用wget下载就好了 如果要下载之后直接看文件 可以用wget -qO- &amp;hellip;.&lt;/p&gt;
-&lt;p&gt;file命令可以查看文件类型
-也可以cat查看文件内容&lt;/p&gt;
-&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816224136.png"&gt;&lt;/p&gt;
-&lt;p&gt;可以看到flag并不在这里
-这里其实发现根目录有一个flag.txt文件&lt;/p&gt;
-&lt;p&gt;&lt;a class="link" href="http://haobachang520.oss-cn-chengdu.aliyuncs.com/flag.txt" target="_blank" rel="noopener"
- &gt;http://haobachang520.oss-cn-chengdu.aliyuncs.com/flag.txt&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;但是呢 这里面的flag是错误的&lt;/p&gt;
-&lt;p&gt;观察文件名 hbc_001 猜测文件后缀可能是入手点
-首先创建一个 字典&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; i in &lt;span class="k"&gt;$(&lt;/span&gt;seq &lt;span class="m"&gt;1&lt;/span&gt; 20&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="nb"&gt;printf&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;hbc_%03d\n&amp;#34;&lt;/span&gt; &lt;span class="nv"&gt;$i&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt; &amp;gt; words.txt
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;作用是生成一个字典/词表文件 words.txt，内容是从 hbc_001 到 hbc_020 共 20 个单词&lt;/p&gt;
-&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816224921.png"&gt;
-然后使用ffuf爆破&lt;/p&gt;
-&lt;p&gt;ffuf（Fuzz Faster U Fool）是一款用 Go 语言编写的、高速的 Web 模糊测试（fuzzing）工具&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ffuf -u &lt;span class="s2"&gt;&amp;#34;http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/FUZZ&amp;#34;&lt;/span&gt; -w words.txt
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;爆破
-&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816230002.png"&gt;&lt;/p&gt;
-&lt;p&gt;爆破点：FUZZ = 文件名&lt;/p&gt;
-&lt;p&gt;可以看到返回了一些文件 然后一个个读取&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/hbc_012
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;一直到12得到flag&lt;/p&gt;
-&lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816231854.png"&gt;&lt;/p&gt;</description></item><item><title>代码块美化示例</title><link>https://tylms0.github.io/p/code-blocks-demo/</link><pubDate>Mon, 17 Aug 2026 04:00:00 +0800</pubDate><guid>https://tylms0.github.io/p/code-blocks-demo/</guid><description>&lt;h2 id="介绍"&gt;介绍
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>代码 on tylms0 的博客</title><link>https://tylms0.github.io/tags/%E4%BB%A3%E7%A0%81/</link><description>Recent content in 代码 on tylms0 的博客</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 17 Aug 2026 04:00:00 +0800</lastBuildDate><atom:link href="https://tylms0.github.io/tags/%E4%BB%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml"/><item><title>代码块美化示例</title><link>https://tylms0.github.io/p/code-blocks-demo/</link><pubDate>Mon, 17 Aug 2026 04:00:00 +0800</pubDate><guid>https://tylms0.github.io/p/code-blocks-demo/</guid><description>&lt;h2 id="介绍"&gt;介绍
 &lt;/h2&gt;&lt;p&gt;这是一篇用来展示美化后代码块效果的文章，包含多种常用语言。正文段落里的 &lt;code&gt;inline code&lt;/code&gt; 也做了同步优化，看起来更精致柔和，不会像浏览器默认的那样扎眼。&lt;/p&gt;
 &lt;h2 id="python-示例"&gt;Python 示例
 &lt;/h2&gt;&lt;p&gt;快速排序：&lt;/p&gt;
