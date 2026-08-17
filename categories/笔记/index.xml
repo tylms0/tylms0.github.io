@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>笔记 on tylms0 的博客</title><link>https://tylms0.github.io/categories/%E7%AC%94%E8%AE%B0/</link><description>Recent content in 笔记 on tylms0 的博客</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 17 Aug 2026 02:00:00 +0800</lastBuildDate><atom:link href="https://tylms0.github.io/categories/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>oss存储桶遍历</title><link>https://tylms0.github.io/p/oss-bucket-traversal/</link><pubDate>Mon, 17 Aug 2026 02:00:00 +0800</pubDate><guid>https://tylms0.github.io/p/oss-bucket-traversal/</guid><description>&lt;p&gt;攻击者或未授权用户能够列举出 OSS 存储桶里都有哪些文件/对象，也就是拿到桶内的对象列表（文件名、Key、大小、修改时间等元数据）。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>笔记 on tylms0 的博客</title><link>https://tylms0.github.io/categories/%E7%AC%94%E8%AE%B0/</link><description>Recent content in 笔记 on tylms0 的博客</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Mon, 17 Aug 2026 12:11:06 +0800</lastBuildDate><atom:link href="https://tylms0.github.io/categories/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>oss存储桶遍历</title><link>https://tylms0.github.io/p/oss-bucket-traversal/</link><pubDate>Mon, 17 Aug 2026 12:11:06 +0800</pubDate><guid>https://tylms0.github.io/p/oss-bucket-traversal/</guid><description>&lt;p&gt;&lt;strong&gt;OSS（对象存储服务）&lt;/strong&gt; 是一种用于存储非结构化数据（如图片、音频、视频等）的数据池。数据以对象（Object）的形式存储在OSS的存储空间（Bucket）中。每个对象都有一个唯一的文件名（Key），通过这个Key可以获取对象的内容。&lt;/p&gt;
+&lt;p&gt;攻击者或未授权用户能够列举出 OSS 存储桶里都有哪些文件/对象，也就是拿到桶内的对象列表（文件名、Key、大小、修改时间等元数据）。&lt;/p&gt;
 &lt;p&gt;这里用好靶场的靶场举例
 &lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816222719.png"&gt;
 可以看到 这里是直接把路径给贴出来了
@@ -17,16 +18,16 @@ file命令可以查看文件类型
 但是呢 这里面的flag是错误的
 观察文件名 hbc_001 猜测文件后缀可能是入手点
 首先创建一个 字典&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;for i in $(seq 1 20); do printf &amp;quot;hbc_%03d\n&amp;quot; $i; done &amp;gt; words.txt&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;作用是生成一个字典/词表文件 words.txt，内容是从 hbc_001 到 hbc_020 共 20 个单词&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; i in &lt;span style="color:#66d9ef"&gt;$(&lt;/span&gt;seq &lt;span style="color:#ae81ff"&gt;1&lt;/span&gt; 20&lt;span style="color:#66d9ef"&gt;)&lt;/span&gt;; &lt;span style="color:#66d9ef"&gt;do&lt;/span&gt; printf &lt;span style="color:#e6db74"&gt;&amp;#34;hbc_%03d\n&amp;#34;&lt;/span&gt; $i; &lt;span style="color:#66d9ef"&gt;done&lt;/span&gt; &amp;gt; words.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;作用是生成一个字典/词表文件 words.txt，内容是从 hbc_001 到 hbc_020 共 20 个单词&lt;/p&gt;
 &lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816224921.png"&gt;
 然后使用ffuf爆破
-ffuf（Fuzz Faster U Fool）是一款用 Go 语言编写的、高速的 Web 模糊测试（fuzzing）工具
-&lt;code&gt;ffuf -u &amp;quot;http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/FUZZ&amp;quot; -w words.txt&lt;/code&gt;
-爆破
+ffuf（Fuzz Faster U Fool）是一款用 Go 语言编写的、高速的 Web 模糊测试（fuzzing）工具&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;ffuf -u &lt;span style="color:#e6db74"&gt;&amp;#34;http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/FUZZ&amp;#34;&lt;/span&gt; -w words.txt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;爆破
 &lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816230002.png"&gt;&lt;/p&gt;
 &lt;p&gt;爆破点：FUZZ = 文件名&lt;/p&gt;
-&lt;p&gt;可以看到返回了一些文件 然后一个个读取
-&lt;code&gt;curl http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/hbc_012&lt;/code&gt;
-一直到12得到flag&lt;/p&gt;
+&lt;p&gt;可以看到返回了一些文件 然后一个个读取&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;curl http://haobachang520.oss-cn-chengdu.aliyuncs.com/2b8bb825-0ebf-4514-bb07-62036b7d0435/hbc_012
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;一直到12得到flag&lt;/p&gt;
 &lt;p&gt;&lt;img loading="lazy" sizes="(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px" src="https://tylms0.github.io/img/Pasted-image-20260816231854.png"&gt;&lt;/p&gt;</description></item></channel></rss>
